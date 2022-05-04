@@ -41,6 +41,7 @@ module axi_to_reg #(
 )(
   input  logic  clk_i             ,
   input  logic  rst_ni            ,
+  input  logic  clr_i             ,
   input  logic  testmode_i        ,
   input  axi_req_t  axi_req_i,
   output axi_rsp_t  axi_rsp_o,
@@ -81,6 +82,7 @@ module axi_to_reg #(
   ) i_axi_to_axi_lite (
     .clk_i,
     .rst_ni,
+    .clr_i,
     .test_i ( testmode_i ),
     .slv_req_i (axi_req_i),
     .slv_resp_o (axi_rsp_o),
@@ -131,6 +133,7 @@ module axi_to_reg_intf #(
 )(
   input  logic  clk_i     ,
   input  logic  rst_ni    ,
+  input  logic  clr_i     ,
   input  logic  testmode_i,
   AXI_BUS.Slave in        ,
   REG_BUS.out   reg_o
@@ -155,6 +158,7 @@ module axi_to_reg_intf #(
   ) i_axi_to_axi_lite (
     .clk_i,
     .rst_ni,
+    .clr_i,
     .testmode_i,
     .slv ( in ),
     .mst ( axi_lite )
