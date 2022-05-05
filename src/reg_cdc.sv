@@ -11,17 +11,21 @@
 // Fabian Schuiki <fschuiki@iis.ee.ethz.ch>
 // Florian Zaruba <zarubaf@iis.ee.ethz.ch>
 
+`include "common_cells/registers.svh"
+
 module reg_cdc #(
     parameter type req_t = logic,
     parameter type rsp_t = logic
 ) (
     input  logic src_clk_i,
     input  logic src_rst_ni,
+    input  logic src_clr_i,
     input  req_t src_req_i,
     output rsp_t src_rsp_o,
 
     input  logic dst_clk_i,
     input  logic dst_rst_ni,
+    input  logic dst_clr_i,
     output req_t dst_req_o,
     input  rsp_t dst_rsp_i
 );
@@ -59,12 +63,14 @@ module reg_cdc #(
     cdc_2phase #(.T(req_t)) i_cdc_req (
         .src_rst_ni  ( src_rst_ni    ),
         .src_clk_i   ( src_clk_i     ),
+	.src_clr_i   ( src_clr_i     ),
         .src_data_i  ( src_req       ),
         .src_valid_i ( src_req_valid ),
         .src_ready_o ( src_req_ready ),
 
         .dst_rst_ni  ( dst_rst_ni    ),
         .dst_clk_i   ( dst_clk_i     ),
+	.dst_clr_i   ( dst_clr_i     ),
         .dst_data_o  ( dst_req       ),
         .dst_valid_o ( dst_req_valid ),
         .dst_ready_i ( dst_req_ready )
@@ -74,12 +80,14 @@ module reg_cdc #(
     cdc_2phase #(.T(rsp_t)) i_cdc_rsp (
         .src_rst_ni  ( dst_rst_ni    ),
         .src_clk_i   ( dst_clk_i     ),
+	.src_clr_i   ( dst_clr_i     ),
         .src_data_i  ( dst_rsp_q     ),
         .src_valid_i ( dst_rsp_valid ),
         .src_ready_o ( dst_rsp_ready ),
 
         .dst_rst_ni  ( src_rst_ni    ),
         .dst_clk_i   ( src_clk_i     ),
+	.dst_clr_i   ( src_clr_i     ),
         .dst_data_o  ( src_rsp       ),
         .dst_valid_o ( src_rsp_valid ),
         .dst_ready_i ( src_rsp_ready )
@@ -119,12 +127,7 @@ module reg_cdc #(
         endcase
     end
 
-    always_ff @(posedge src_clk_i, negedge src_rst_ni) begin
-        if (!src_rst_ni)
-            src_state_q <= Idle;
-        else
-            src_state_q <= src_state_d;
-    end
+    `FFC(src_state_q, src_state_d, Idle, src_clk_i, src_rst_ni, src_clr_i)
 
 
     //////////////////////////////
@@ -164,14 +167,7 @@ module reg_cdc #(
         endcase
     end
 
-    always_ff @(posedge dst_clk_i, negedge dst_rst_ni) begin
-        if (!dst_rst_ni) begin
-            dst_state_q <= Idle;
-            dst_rsp_q <= '0;
-        end else begin
-            dst_state_q <= dst_state_d;
-            dst_rsp_q <= dst_rsp_d;
-        end
-    end
+    `FFC(dst_state_q, dst_state_d, Idle, dst_clk_i, dst_rst_ni, dst_clr_i)
+    `FFC(dst_rsp_q, dst_rsp_d, '0, dst_clk_i, dst_rst_ni, dst_clr_i)
 
 endmodule
