@@ -201,6 +201,7 @@ module axi_lite_to_reg #(
   ) i_stream_arbiter (
     .clk_i,
     .rst_ni,
+    .clr_i       ( 1'b0            ),
     .inp_data_i  ( {read_req,   write_req}   ),
     .inp_valid_i ( {read_valid, write_valid} ),
     .inp_ready_o ( {read_ready, write_ready} ),
