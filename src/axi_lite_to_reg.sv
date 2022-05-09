@@ -91,6 +91,7 @@ module axi_lite_to_reg #(
   ) i_fifo_write_req (
     .clk_i,
     .rst_ni,
+    .clr_i      ( 1'b0             ),
     .flush_i    ( 1'b0             ),
     .testmode_i ( 1'b0             ),
     .full_o     ( write_fifo_full  ),
@@ -117,6 +118,7 @@ module axi_lite_to_reg #(
   ) i_fifo_write_resp (
     .clk_i,
     .rst_ni,
+    .clr_i      ( 1'b0                  ),
     .flush_i    ( 1'b0                  ),
     .testmode_i ( 1'b0                  ),
     .full_o     ( write_resp_fifo_full  ),
@@ -141,6 +143,7 @@ module axi_lite_to_reg #(
   ) i_fifo_read (
     .clk_i,
     .rst_ni,
+    .clr_i      ( 1'b0            ),
     .flush_i    ( 1'b0            ),
     .testmode_i ( 1'b0            ),
     .full_o     ( read_fifo_full  ),
@@ -164,6 +167,7 @@ module axi_lite_to_reg #(
   ) i_fifo_read_resp (
     .clk_i,
     .rst_ni,
+    .clr_i      ( 1'b0                 ),
     .flush_i    ( 1'b0                 ),
     .testmode_i ( 1'b0                 ),
     .full_o     ( read_resp_fifo_full  ),
